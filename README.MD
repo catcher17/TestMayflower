@@ -1,5 +1,5 @@
 ### Стэк на котором работал java, testNg, okhttp, hamcrest, allure, mock-server(для моков и локальной отладки)
-
+### по доке и гайдам переписал на kotlin + restAssured https://github.com/catcher17/TestMayflowerKotlin
 
 # Чек-лист возможных проверок
 ### Эндпоинт: POST `user/create`
