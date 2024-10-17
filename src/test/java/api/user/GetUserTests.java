@@ -47,12 +47,11 @@ public class GetUserTests extends BaseUserTest {
                 .build();
 
         Response response = okHttpClient.newCall(request).execute();
-
+        //будет падать т.к. не отчистить пользователей
         String responseBody = response.body().string();
         step("Проверяем что созданный пользователь успешно возвращается в списке", () ->
         {
             assertThat("Код ответа должен быть 200", response.code(), is(200));
-            //Можно заменить на модельку User
             assertThat("Проверка корректности response", responseBody, equalTo("[]"));
         });
     }

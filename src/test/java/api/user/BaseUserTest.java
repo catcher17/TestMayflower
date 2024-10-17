@@ -5,6 +5,7 @@ import okhttp3.OkHttpClient;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
+
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -16,20 +17,20 @@ public class BaseUserTest {
 
     @BeforeClass
     public void setupTestEnv() {
-        MockServer.startMockServer();
+        //MockServer.startMockServer();
         okHttpClient = new OkHttpClient.Builder().callTimeout(30, TimeUnit.SECONDS).build();
-        //генерация пользователей для тестов, желательно без привязки к post user/create
+        //генерация пользователей для тестов, добавил бы через бд, чтоб не завязываться на post
     }
 
     @BeforeMethod
     public void generateTestData() {
-        uniqueUuidUserName = "test_user_" + UUID.randomUUID().toString();
-        uniqueUuidEmail = UUID.randomUUID().toString() + "@gmail.com";
+        uniqueUuidUserName = "test_user_" + UUID.randomUUID();
+        uniqueUuidEmail = UUID.randomUUID() + "@gmail.com";
     }
 
     @AfterClass
     public void clearTestEnv() {
-        MockServer.stopMockServer();
+        //MockServer.stopMockServer();
         //удаление тестовых пользователей
     }
 }

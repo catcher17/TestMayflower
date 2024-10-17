@@ -45,7 +45,7 @@ public class CreateUserTests extends BaseUserTest {
             assertThat("Проверка имени пользователя на соответствие указанному при регистрации", bodyDetails.get("username").getAsString(), is(uniqueUuidUserName));
             assertThat("Проверка почты пользователя на соответствие указанной при регистрации", bodyDetails.get("email").getAsString(), is(uniqueUuidEmail));
             assertThat("Пароль захеширован и соответствует указанному при регистрации", isPasswordHashValid, is(true));
-            //todo: дополнительно проверить наличие пользователя в бд, чтобы не завязываться на другие get методы
+            //дополнительно проверить наличие пользователя в бд, чтобы не завязываться на другие get методы
         });
     }
 
@@ -141,12 +141,12 @@ public class CreateUserTests extends BaseUserTest {
 
         String responseBody = response.body().string();
         JsonObject jsonResponseBody = JsonParser.parseString(responseBody).getAsJsonObject();
-        //Думаю должна быть минимальная проверка наличия @
+        //Будет падать т.к. нет валидации, думаю должна быть минимальная проверка наличия @
         step("Проверяем что при не заполненном поле", () ->
         {
             assertThat("Код ответа должен быть 400", response.code(), is(400));
             assertThat("Проверка поля success:false", jsonResponseBody.get("success").getAsBoolean(), is(false));
-            assertThat("Проверка, что 'message' содержит ошибку вида - Required valid email" ,
+            assertThat("Проверка, что 'message' содержит ошибку вида - Required valid email",
                     jsonResponseBody.get("message").getAsString(), containsString("Required valid email"));
         });
     }
