@@ -2,7 +2,7 @@
 ### добавил запуск через github actions
 ### по доке и гайдам переписал на kotlin + restAssured https://github.com/catcher17/TestMayflowerKotlin
 
-# Чек-лист возможных проверок
+# Чек-лист проверок
 Приоритизацию делал на основе исследования api, для более точной реализации нужны доп. данные
 - Формат и размер полей username, email, password ?
 - Правила валидации username, email, password ?
