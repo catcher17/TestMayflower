@@ -1,7 +1,9 @@
 package api.user;
 
-import org.example.mock.MockServer;
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -16,10 +18,22 @@ public class BaseUserTest {
     protected String uniqueUuidEmail;
 
     @BeforeClass
-    public void setupTestEnv() {
+    public void setupTestEnv() throws Exception {
         //MockServer.startMockServer();
         okHttpClient = new OkHttpClient.Builder().callTimeout(30, TimeUnit.SECONDS).build();
-        //генерация пользователей для тестов, добавил бы через бд, чтоб не завязываться на post
+        //Добавил создание сюда т.к. нужно только паре тестов
+        RequestBody existingUserFormBody = new FormBody.Builder()
+                .add("username", "existing_user")
+                .add("email", "existing_user_email@test.test")
+                .add("password", "existing_user_password")
+                .build();
+
+        Request existingUserCreateRequest = new Request.Builder()
+                .url(BASE_URL + "/create")
+                .post(existingUserFormBody)
+                .build();
+
+        okHttpClient.newCall(existingUserCreateRequest).execute().close();
     }
 
     @BeforeMethod
@@ -31,6 +45,5 @@ public class BaseUserTest {
     @AfterClass
     public void clearTestEnv() {
         //MockServer.stopMockServer();
-        //удаление тестовых пользователей
     }
 }

@@ -30,8 +30,8 @@ public class CreateUserTests extends BaseUserTest {
                 .build();
 
         Response response = okHttpClient.newCall(request).execute();
-
         String responseBody = response.body().string();
+        response.close();
         JsonObject jsonResponseBody = JsonParser.parseString(responseBody).getAsJsonObject();
         JsonObject bodyDetails = jsonResponseBody.getAsJsonObject("details");
         boolean isPasswordHashValid = BCrypt.checkpw("test_password", bodyDetails.get("password").getAsString());
@@ -52,10 +52,10 @@ public class CreateUserTests extends BaseUserTest {
     @DataProvider(name = "missingFieldsUserData")
     public Object[][] createMissingFieldsUserData() {
         return new Object[][]{
-                {"", "valid_email1@test.com", "test_password", "A username is required"},
-                {"validUsername1", "", "test_password", "An Email is required"},
+                {"", "valid_email@test.com", "test_password", "A username is required"},
+                {"validUsername", "", "test_password", "An Email is required"},
                 //Странное сообщение при отсутствии пароля
-                {"validUsername1", "valid_email1@test.com", "", "A password for the user"}
+                {"validUsername", "valid_email@test.com", "", "A password for the user"}
         };
     }
 
@@ -85,23 +85,24 @@ public class CreateUserTests extends BaseUserTest {
             assertThat("Проверка, что 'message' содержит " + errorMessage,
                     jsonResponseBody.get("message").getAsString(), containsString(errorMessage));
         });
+        response.close();
     }
 
-    @DataProvider(name = "existenceFieldsUserData")
-    public Object[][] createExistenceFieldsUserData() {
+    @DataProvider(name = "existingFieldsUserData")
+    public Object[][] createExistingFieldsUserData() {
         return new Object[][]{
-                {"validUsername", "new_valid_email@test.com", "This username is taken. Try another."},
-                {"new_validUsername", "valid_email@test.com", "Email already exists"},
+                {"existing_user", "not_existing_user_email@test.com", "This username is taken. Try another."},
+                {"not_existing_user", "existing_user_email@test.test", "Email already exists"},
         };
     }
 
-    @Test(dataProvider = "existenceFieldsUserData")
+    @Test(dataProvider = "existingFieldsUserData")
     @Description("Регистрация пользователя с уже зарегистрированными userName/email")
     public void tryCreateUserWithExistingUserNameOrEmail(String userName, String userEmail, String errorMessage) throws Exception {
         RequestBody formBody = new FormBody.Builder()
                 .add("username", userName)
                 .add("email", userEmail)
-                .add("password", "test_password")
+                .add("password", "existing_user_password")
                 .build();
 
         Request request = new Request.Builder()
@@ -121,6 +122,7 @@ public class CreateUserTests extends BaseUserTest {
             assertThat("Проверка, что 'message' содержит " + errorMessage,
                     jsonResponseBody.get("message").getAsString(), containsString(errorMessage));
         });
+        response.close();
     }
 
     @Test()
@@ -149,5 +151,6 @@ public class CreateUserTests extends BaseUserTest {
             assertThat("Проверка, что 'message' содержит ошибку вида - Required valid email",
                     jsonResponseBody.get("message").getAsString(), containsString("Required valid email"));
         });
+        response.close();
     }
 }
